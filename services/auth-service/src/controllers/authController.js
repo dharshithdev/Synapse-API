@@ -11,6 +11,7 @@ const generateToken = (id) => {
 // @desc    Register a new user
 // @route   POST /api/auth/register
 exports.registerUser = async (req, res) => {
+    console.log("HERE")
     const { username, email, password } = req.body;
 
     try {
@@ -36,7 +37,7 @@ exports.registerUser = async (req, res) => {
 // @desc    Login user & get token
 // @route   POST /api/auth/login
 exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; 
 
     try {
         // Explicitly select the password field since it is hidden by default in the model

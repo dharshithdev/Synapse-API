@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectDatabase = async () => {
+const connectDB = async () => {
     try {
         const mongoURI = process.env.MONGO_URI;
         
@@ -12,4 +12,4 @@ const connectDatabase = async () => {
     }
 };
 
-module.exports = connectDatabase;
+module.exports = connectDB;

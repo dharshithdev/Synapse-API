@@ -4,7 +4,7 @@ const rateLimiter = (maxRequests, windowSizeInSeconds) => {
     return async (req, res, next) => {
         // Use the client's IP address as the unique identifier key in Redis
         const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const redisKey = `rate-limit:${ip}`;
+        const redisKey = `rate-limit:${ip}`; 
 
         try {
             // Fetch the current number of requests this IP has made

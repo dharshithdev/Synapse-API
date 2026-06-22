@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize MongoDB connection
-connectDB();
+connectDB(); 
 
 // Mount our Auth routes at the root level of this microservice
 app.use('/', authRoutes);

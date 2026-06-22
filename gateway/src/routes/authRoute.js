@@ -1,14 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 
-// This proxy intercepts requests to port 5000 and ships them to port 5001
 const authProxy = createProxyMiddleware({
-    target: process.env.AUTH_SERVICE_URL || 'http://localhost:5001',
+    target: process.env.AUTH_SERVICE_URL || 'http://127.0.0.1:5001', 
     changeOrigin: true,
+    pathRewrite: {
+        '^/api/auth': '', 
+    },
+    // Modern http-proxy-middleware v3 syntax requires event handlers inside 'on'
+    on: {
+        proxyReq: fixRequestBody,
+        error: (err, req, res) => {
+            console.error('❌ Proxy failed to reach Auth Service:', err.message);
+            res.status(502).json({ message: 'Gateway cannot reach the Auth Service' });
+        }
+    }
 });
 
-// Pass ALL incoming requests on this path over to the Auth Microservice
 router.use('/', authProxy);
 
 module.exports = router;
