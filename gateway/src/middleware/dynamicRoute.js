@@ -6,12 +6,9 @@ const dynamicRouter = async (req, res, next) => {
         // 1. Fetch active configurations
         const services = await Service.find({ isActive: true });
         
-        // 🚨 EXTRA DEBUG LOGGER: Let's see exactly what Mongoose parsed out of MongoDB
-        console.log("📁 Parsed documents from Mongoose array:", JSON.stringify(services, null, 2));
-
         // 2. Build incoming path
         const fullPath = `/api${req.url}`.trim().toLowerCase();
-        console.log(`🔍 Scanning database rules for path: ${fullPath}`);
+        console.log(` Scanning database rules for path: ${fullPath}`);
 
         // 3. Find match using a clean string validation
         const serviceConfig = services.find(service => {
@@ -22,19 +19,17 @@ const dynamicRouter = async (req, res, next) => {
         });
 
         if (!serviceConfig) {
-            console.log(`⚠️ No registered service matches prefix for: ${fullPath}`);
+            console.log(` No registered service matches prefix for: ${fullPath}`);
             return next();
         }
 
-        console.log(`🎯 Match found! Routing "${fullPath}" to -> ${serviceConfig.name} (${serviceConfig.targetUrl})`);
+        console.log(` Match found! Routing "${fullPath}" to -> ${serviceConfig.name} (${serviceConfig.targetUrl})`);
 
-        // 4. Create and execute proxy
         // 4. Create and execute the proxy middleware structure seamlessly
     const dynamicProxy = createProxyMiddleware({
         target: serviceConfig.targetUrl,
         changeOrigin: true,
         pathRewrite: (path, req) => {
-            // serviceConfig.apiPrefix is "/api/auth"
             // This clean utility strips "/api/auth" directly off the full original route safely
             const originalFullRoute = `/api${path}`;
             const strippedRoute = originalFullRoute.replace(serviceConfig.apiPrefix, '');
@@ -43,7 +38,7 @@ const dynamicRouter = async (req, res, next) => {
         on: {
             proxyReq: fixRequestBody,
             error: (err, req, res) => {
-                console.error(`❌ Dynamic proxy failed for ${serviceConfig.name}:`, err.message);
+                console.error(` Dynamic proxy failed for ${serviceConfig.name}:`, err.message);
                 res.status(502).json({ message: `Gateway cannot reach ${serviceConfig.name}` });
             }
         }
