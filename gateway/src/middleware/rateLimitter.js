@@ -33,7 +33,7 @@ const rateLimiter = (maxRequests, windowSizeInSeconds) => {
 
         } catch (error) {
             console.error('Rate Limiter Error:', error);
-            // Fail-safe: If Redis goes down, we still let traffic pass so the app doesn't break
+            // Fail-safe: If Redis goes down, still let traffic pass so the app doesn't break
             next();
         }
     };
