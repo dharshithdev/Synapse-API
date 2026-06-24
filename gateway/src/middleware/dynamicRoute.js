@@ -1,21 +1,18 @@
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const Service = require('../models/Service');
-const authGuard = require('./authGuard'); // Make sure you created gateway/src/middleware/authGuard.js
+const authGuard = require('./authGuard');
+// Import your rate limiter logic (adjust this path to match your actual checkRateLimit file)
+const { checkRateLimit } = require('./rateLimitter'); 
 
 const dynamicRouter = async (req, res, next) => {
     try {
-        // 1. Fetch active configurations from MongoDB
         const services = await Service.find({ isActive: true });
-        
-        // 2. Build incoming path to check against database rules
         const fullPath = `/api${req.url}`.trim().toLowerCase();
-        console.log(`🔍 Scanning database rules for path: ${fullPath}`);
 
-        // 3. Find match using clean string validation
+        // 1. Match incoming path with database configurations
         const serviceConfig = services.find(service => {
             if (!service.apiPrefix) return false;
-            const databasePrefix = service.apiPrefix.trim().toLowerCase();
-            return fullPath.startsWith(databasePrefix);
+            return fullPath.startsWith(service.apiPrefix.trim().toLowerCase());
         });
 
         if (!serviceConfig) {
@@ -23,25 +20,32 @@ const dynamicRouter = async (req, res, next) => {
             return next();
         }
 
-        console.log(`🎯 Match found! Routing "${fullPath}" to -> ${serviceConfig.name} (${serviceConfig.targetUrl})`);
+        // 2. ⚡ DYNAMIC RATE LIMIT CHECK
+        // Instead of hardcoded values, we pass the specific service's database rules!
+        const windowInSeconds = serviceConfig.rateLimitWindow || 60;
+        const maxRequests = serviceConfig.rateLimitMax || 5;
+        
+        // We simulate your rate limiter internally
+        console.log(windowInSeconds, maxRequests);
+        const isRateLimited = await checkRateLimit(req, windowInSeconds, maxRequests);
+        console.log(isRateLimited);
+        if (isRateLimited) {
+            return res.status(429).json({ 
+                error: `Too many requests to ${serviceConfig.name}. Please try again in ${windowInSeconds} seconds.` 
+            });
+        }
 
-        // 4. 🧠 DYNAMIC AUTHENTICATION CHECK
-        // Extract the sub-path inside the microservice (e.g., '/api/auth/register' becomes '/register')
+        // 3. DYNAMIC AUTHENTICATION CHECK
         const shortPath = fullPath.replace(serviceConfig.apiPrefix.trim().toLowerCase(), '');
         const cleanShortPath = shortPath === '' ? '/' : shortPath;
-
-        // Check if the current route is listed in the database's public array
         const isPublicRoute = serviceConfig.publicRoutes.some(route => route.trim().toLowerCase() === cleanShortPath);
 
         if (!isPublicRoute) {
-            // 🔒 Route is private! Fire the authentication shield guard
             return authGuard(req, res, () => {
                 executeProxy(req, res, next, serviceConfig);
             });
         }
 
-        // 🔓 Route is public! Bypass authentication completely
-        console.log(`🔓 Public endpoint detected (${cleanShortPath}). Bypassing auth guard.`);
         executeProxy(req, res, next, serviceConfig);
 
     } catch (error) {
@@ -50,7 +54,6 @@ const dynamicRouter = async (req, res, next) => {
     }
 };
 
-// Isolated helper wrapper function to execute the proxy handler
 function executeProxy(req, res, next, serviceConfig) {
     const dynamicProxy = createProxyMiddleware({
         target: serviceConfig.targetUrl,
@@ -63,7 +66,6 @@ function executeProxy(req, res, next, serviceConfig) {
         on: {
             proxyReq: fixRequestBody,
             error: (err, req, res) => {
-                console.error(`❌ Dynamic proxy failed for ${serviceConfig.name}:`, err.message);
                 res.status(502).json({ message: `Gateway cannot reach ${serviceConfig.name}` });
             }
         }

@@ -1,42 +1,34 @@
 const { redisClient } = require('../config/redis');
 
-const rateLimiter = (maxRequests, windowSizeInSeconds) => {
-    return async (req, res, next) => {
-        // Use the client's IP address as the unique identifier key in Redis
-        const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const redisKey = `rate-limit:${ip}`; 
+// Refactored to act as a direct functional checker rather than a factory wrapper
+const checkRateLimit = async (req, windowSizeInSeconds, maxRequests) => {
+    // 1. Resolve unique IP tracking key
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const redisKey = `rate-limit:${ip}`; 
 
-        try {
-            // Fetch the current number of requests this IP has made
-            const requests = await redisClient.get(redisKey);
+    try {
+        const requests = await redisClient.get(redisKey);
 
-            if (requests === null) {
-                // First request in this time window: Create the key and set expiration
-                await redisClient.set(redisKey, 1, { EX: windowSizeInSeconds });
-                return next();
-            }
-
-            const currentRequests = parseInt(requests, 10);
-
-            if (currentRequests >= maxRequests) {
-                // Limit exceeded! Block the request
-                return res.status(429).json({
-                    error: 'Too Many Requests',
-                    message: `You have exceeded your limit of ${maxRequests} requests per ${windowSizeInSeconds} seconds. Please slow down!`,
-                    retryAfterSeconds: await redisClient.ttl(redisKey) // Tells them exactly how long to wait
-                });
-            }
-
-            // Still within the limit: increment the count in Redis
-            await redisClient.incr(redisKey);
-            next();
-
-        } catch (error) {
-            console.error('Rate Limiter Error:', error);
-            // Fail-safe: If Redis goes down, still let traffic pass so the app doesn't break
-            next();
+        if (requests === null) {
+            // First hit: Initialize token bucket in Redis with TTL window
+            await redisClient.set(redisKey, 1, { EX: windowSizeInSeconds });
+            return false; // NOT rate limited
         }
-    };
+
+        const currentRequests = parseInt(requests, 10);
+
+        if (currentRequests >= maxRequests) {
+            return true; // YES, rate limited! Block them.
+        }
+
+        // Increment access counter safely
+        await redisClient.incr(redisKey);
+        return false; // NOT rate limited
+
+    } catch (error) {
+        console.error('Rate Limiter Engine Error:', error);
+        return false; // Fail-safe fallback: let traffic pass if Redis behaves unexpectedly
+    }
 };
 
-module.exports = rateLimiter;
+module.exports = { checkRateLimit };

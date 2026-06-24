@@ -28,10 +28,10 @@ app.use((req, res, next) => {
 
 const adminRoutes = require('./admin/adminRoutes');
 
-app.use('/api/admin', rateLimiter(3, 10), adminRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Applying the global rate limiter across API entry configurations,
-app.use('/api', rateLimiter(5, 60), dynamicRouter);
+app.use('/api', dynamicRouter);
 
 app.listen(PORT, () => {
     console.log(`Dynamic Gatekeeper is active on port ${PORT}`);
