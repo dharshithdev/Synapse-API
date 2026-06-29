@@ -1,6 +1,6 @@
-## 🌐 Nexus Gateway Ecosystem
+## 🌐 Synapse API Gateway Ecosystem
 
-Nexus is a decoupled, production-ready microservices architecture built around a centralized API Gateway. The platform acts as a high-throughput single point of entry, managing traffic, securing internal systems, and proxying communication across isolated backend services.
+Synapse-API is a decoupled, production-ready microservices architecture built around a centralized API Gateway. The platform acts as a high-throughput single point of entry, managing traffic, securing internal systems, and proxying communication across isolated backend services.
 
 ### 🛠️ Core Architecture Components
 * **API Gateway (Node.js/Express):** The front firewall running on port 5000. It handles incoming traffic, route proxying via `http-proxy-middleware`, and security configurations.
