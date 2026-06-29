@@ -4,6 +4,7 @@ import { User, ShieldCheck, Mail, Lock, Trash2, AlertTriangle, Loader2, Save, Re
 import Sidebar from '../Components/Sidebar';
 import Verify from '../Security/VerifyUser';
 import api from '../Security/AxiosConfig';
+import Footer from '../Components/Footer';
 
 const Profile = () => {
     Verify();

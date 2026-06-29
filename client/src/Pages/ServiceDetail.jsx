@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Key, RefreshCw, Activity, Terminal, Shield, Check, Copy, AlertTriangle, Settings2, Save } from 'lucide-react';
 import Sidebar from '../Components/Sidebar';
 import Verify from '../Security/VerifyUser'
+import Footer from '../Components/Footer';
 
 const ServiceDetail = () => {
     Verify();

@@ -4,6 +4,7 @@ import { Activity, ShieldCheck, Globe, Clock, Zap, Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Ensure axios is imported
 import Sidebar from '../Components/Sidebar';
+import Footer from '../Components/Footer';
 
 const StatCard = ({ title, value, icon: Icon, trend }) => (
   <div className="bg-[#12111A] border border-violet-500/10 p-6 rounded-2xl">
@@ -217,6 +218,7 @@ const Dashboard = () => {
         )}
 
       </main>
+      <Footer />
     </div>
   );
 };

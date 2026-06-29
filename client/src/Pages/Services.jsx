@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, ShieldAlert, ArrowRight, ToggleLeft, ToggleRight, Loader2, ExternalLink, Key, Copy, Check, X } from 'lucide-react';
 import Sidebar from '../Components/Sidebar';
 import Verify from '../Security/VerifyUser';
+import Footer from '../Components/Footer';
 
 const ServicesPage = () => {
     Verify();
