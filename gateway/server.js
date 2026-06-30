@@ -7,8 +7,28 @@ const {connectToDB} = require("./Config/Connect");
 
 const PORT = process.env.PORT;
 
+const allowedOrigins = [
+  'http://localhost:3000',    
+  'https://marvelsato.com',           // New custom domain
+  'https://www.marvelsato.com',       // Include www
+  process.env.FRONTEND_URL               
+];
+
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS blocked: This site is not authorized.'));
+    }
+  },
+  credentials: true 
+}));
+
 app.use(express.json())
 
 const authRoute = require('./Routes/UserAuth');
