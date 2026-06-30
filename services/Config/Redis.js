@@ -1,26 +1,25 @@
 const { createClient } = require('redis');
 
-const redisClient = createClient({
-    url: process.env.REDIS_URL,
-    socket: {
-    // 💡 This forces the client to negotiate the TLS handshake correctly over rediss://
+const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+const isSecure = redisUrl.startsWith('rediss://');
+
+const client = createClient({
+  url: redisUrl,
+  socket: isSecure ? {
     tls: true,
-    rejectUnauthorized: false // Necessary for many serverless cloud environments
-  }
+    rejectUnauthorized: false
+  } : {}
 });
 
-redisClient.on('error', (err) => console.error('❌ Redis Cache Cluster Node Error:', err));
-redisClient.on('connect', () => console.log('⚡ Redis Client handshaking...'));
-redisClient.on('ready', () => console.log('⚡ Redis Telemetry Throttler cache connected and ready.'));
+client.on('error', (err) => console.error('❌ Redis Cache Cluster Node Error:', err));
+client.on('connect', () => console.log('⚡ Redis Client connected successfully!'));
 
+// 💡 Wrap the connection command inside an explicit async function
 const connectRedis = async () => {
-    try {
-        if (!redisClient.isOpen) {
-            await redisClient.connect();
-        }
-    } catch (err) {
-        console.error('❌ Failed to establish initial Redis connection:', err.message);
-    }
-};  
+  if (!client.isOpen) {
+    await client.connect();
+  }
+};
 
-module.exports = { redisClient, connectRedis };
+// Export both the startup function and the client instance for queries
+module.exports = { connectRedis, client };
