@@ -20,6 +20,6 @@ app.use(ipFirewall);
 // Mount the clean, isolated proxy router module onto the base endpoint structure
 app.use('/api/v1/{*proxyPath}', proxyRouter);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(` Synapse Distributed Core Proxy Operational on port ${PORT}`);
 });

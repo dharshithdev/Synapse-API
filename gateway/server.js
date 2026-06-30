@@ -52,7 +52,7 @@ app.use((err, req, res, next) => {
 });
 
 connectToDB().then(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log("Server Running on PORT ", PORT);
     });
 });
