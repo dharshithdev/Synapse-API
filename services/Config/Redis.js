@@ -1,7 +1,12 @@
 const { createClient } = require('redis');
 
 const redisClient = createClient({
-    url: process.env.REDIS_URL
+    url: process.env.REDIS_URL,
+    socket: {
+    // 💡 This forces the client to negotiate the TLS handshake correctly over rediss://
+    tls: true,
+    rejectUnauthorized: false // Necessary for many serverless cloud environments
+  }
 });
 
 redisClient.on('error', (err) => console.error('❌ Redis Cache Cluster Node Error:', err));
@@ -16,6 +21,6 @@ const connectRedis = async () => {
     } catch (err) {
         console.error('❌ Failed to establish initial Redis connection:', err.message);
     }
-};
+};  
 
 module.exports = { redisClient, connectRedis };
