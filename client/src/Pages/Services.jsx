@@ -19,7 +19,7 @@ const ServicesPage = () => {
     
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [activePage, setActivePage] = useState('services');
-    const [formData, setFormData] = useState({ name: '', frontendPath: '', targetUrl: '', rateLimit: 60 });
+    const [formData, setFormData] = useState({ name: '', frontendPath: '', targetUrl: '', rateLimit: 10 });
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('synapse_token');
@@ -245,21 +245,21 @@ const ServicesPage = () => {
                                 <form onSubmit={handleCreateService} className="space-y-4 mt-4">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Service Reference Identity</label>
-                                        <input type="text" required placeholder="e.g., HerCare Production Backend" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-all" />
+                                        <input type="text" required placeholder="e.g., ABCD Production Backend" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-all" />
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Proxy Intercept Path</label>
-                                            <input type="text" required placeholder="e.g., /api/hercare" value={formData.frontendPath} onChange={(e) => setFormData({...formData, frontendPath: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm font-mono outline-none transition-all" />
+                                            <input type="text" required placeholder="e.g., /api/abcd" value={formData.frontendPath} onChange={(e) => setFormData({...formData, frontendPath: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm font-mono outline-none transition-all" />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Rate Window (RPM)</label>
-                                            <input type="number" required min="1" value={formData.rateLimit} onChange={(e) => setFormData({...formData, rateLimit: parseInt(e.target.value) || 60})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-all" />
+                                            <input type="number" required min="1" value={formData.rateLimit} onChange={(e) => setFormData({...formData, rateLimit: parseInt(e.target.value) || 10})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm outline-none transition-all" />
                                         </div>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Absolute Destination Target URL</label>
-                                        <input type="url" required placeholder="https://hercare-api.onrender.com" value={formData.targetUrl} onChange={(e) => setFormData({...formData, targetUrl: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm font-mono outline-none transition-all" />
+                                        <input type="url" required placeholder="https://abcd-api.onrender.com" value={formData.targetUrl} onChange={(e) => setFormData({...formData, targetUrl: e.target.value})} className="w-full bg-[#1A1926] border border-violet-500/10 focus:border-violet-500 text-white rounded-xl px-4 py-2.5 text-sm font-mono outline-none transition-all" />
                                     </div>
                                     <div className="flex gap-3 pt-5 mt-4 border-t border-gray-800">
                                         <button type="button" onClick={handleCloseModal} className="w-1/2 bg-[#1A1926] border border-gray-800 text-gray-300 rounded-xl py-2.5 text-sm font-medium">Cancel</button>

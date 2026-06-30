@@ -47,8 +47,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/analytics" className="hover:text-violet-400 transition-colors flex items-center gap-1 group">
-                  Telemetry Metrics <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Link to="/profile" className="hover:text-violet-400 transition-colors flex items-center gap-1 group">
+                  Profile <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
             </ul>
@@ -59,13 +59,12 @@ const Footer = () => {
             <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-4">Resources</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="#docs" className="hover:text-violet-400 transition-colors">
+                <a href="/docs" className="hover:text-violet-400 transition-colors">
                   API Blueprint Docs
                 </a>
               </li>
               <li>
                 <a href="#status" className="hover:text-violet-400 transition-colors flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   Proxy Node Status
                 </a>
               </li>
