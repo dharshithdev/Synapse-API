@@ -7,11 +7,10 @@ const connectRedis = async () => {
         client = redis.createClient({
             url: process.env.REDIS_URL, 
             socket: {
-                // ✅ CRITICAL CLOUD FIX: Enforce TLS configuration for Upstash
-                tls: {}, 
+                // ✅ FIXED: Setting this to true solves the object/protocol mismatch error
+                tls: true, 
                 reconnectStrategy: (retries) => {
-                    // Cap retries so it doesn't spin infinitely out of control
-                    if (retries > 10) {
+                    if (retries > 15) {
                         console.error('❌ Redis Reconnection limit breached. Halting retry logic.');
                         return false; 
                     }
