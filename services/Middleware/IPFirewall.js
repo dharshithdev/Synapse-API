@@ -38,6 +38,7 @@ const ipFirewall = async (req, res, next) => {
 
     } catch (error) {
         // Fallback catch to prevent engine stall out states
+        console.log(error);
         return res.status(500).json({ error: 'FIREWALL_EXCEPTION_FAULT' });
     }
 };

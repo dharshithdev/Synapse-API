@@ -15,7 +15,7 @@ connectDB();
 connectRedis();
 
 app.use(cors());
-app.use(ipFirewall);
+//app.use(ipFirewall);
 
 // Mount the clean, isolated proxy router module onto the base endpoint structure
 app.use('/api/v1/{*proxyPath}', proxyRouter);
