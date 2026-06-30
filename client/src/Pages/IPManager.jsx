@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Plus, Trash2, Globe, CheckCircle, Ban, Loader2, LayoutDashboard, Terminal, Settings, Menu, X, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
+import Verify from '../Security/VerifyUser'
 
 const IpManager = () => {
   const [rules, setRules] = useState([]);
@@ -9,7 +10,7 @@ const IpManager = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+  Verify();
   // Custom Modal State
   const [deleteModal, setDeleteModal] = useState({ show: false, targetId: null });
   
@@ -26,7 +27,7 @@ const IpManager = () => {
     setError('');
     try {
       const token = localStorage.getItem('synapse_token');
-      const response = await fetch('http://localhost:5000/api/dashboard-mgmt/ip/list', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/ip/list`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -56,7 +57,7 @@ const IpManager = () => {
     setError('');
     try {
       const token = localStorage.getItem('synapse_token');
-      const response = await fetch('http://localhost:5000/api/dashboard-mgmt/ip/add', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/ip/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ const IpManager = () => {
     
     try {
       const token = localStorage.getItem('synapse_token');
-      const response = await fetch(`http://localhost:5000/api/dashboard-mgmt/ip/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/ip/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

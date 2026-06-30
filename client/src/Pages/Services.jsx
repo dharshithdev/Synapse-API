@@ -31,7 +31,7 @@ const ServicesPage = () => {
 
     const fetchServices = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/dashboard-mgmt/actions/services', { 
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services`, { 
                 headers: getAuthHeaders() 
             });
             const data = await res.json();
@@ -51,7 +51,7 @@ const ServicesPage = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('http://localhost:5000/api/dashboard-mgmt/actions/services', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(formData)
@@ -83,7 +83,7 @@ const ServicesPage = () => {
 
     const toggleStatus = async (id, currentStatus) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/dashboard-mgmt/actions/services/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services/${id}`, {
                 method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ isActive: !currentStatus })
@@ -100,7 +100,7 @@ const ServicesPage = () => {
         if (!window.confirm('Are you absolutely certain you want to purge this gateway proxy configuration?')) return;
         setError('');
         try {
-            const res = await fetch(`http://localhost:5000/api/dashboard-mgmt/actions/services/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services/${id}`, {
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });

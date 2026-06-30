@@ -1,12 +1,12 @@
 import React from 'react';
-import { LayoutDashboard, Server, User, Menu, X, Zap } from 'lucide-react';
+import { LayoutDashboard, Server, User, Menu, X, Zap, GlobeLock } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, activePage, setActivePage }) => {
   const menuItems = [
     { id: 'analyze', name: 'Analyze', icon: LayoutDashboard, path: '/' },
     { id: 'services', name: 'Services', icon: Server, path: '/services' },
-    { id: 'manage', name: 'IP Manage', icon: Server, path: '/ipmanage' },
+    { id: 'manage', name: 'IP Manage', icon: GlobeLock, path: '/ipmanage' },
     { id: 'profile', name: 'Profile', icon: User, path: '/profile' },
   ];
 

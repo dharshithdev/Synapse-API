@@ -41,7 +41,7 @@ const AuthPage = () => {
 
         try {
             // Update port matching your gateway configuration (Port 5000)
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

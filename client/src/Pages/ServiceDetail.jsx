@@ -35,7 +35,7 @@ const ServiceDetail = () => {
 
     const fetchServiceDetails = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/dashboard-mgmt/actions/services/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services/${id}`, {
                 headers: getAuthHeaders()
             });
             const result = await res.json();
@@ -68,7 +68,7 @@ const ServiceDetail = () => {
         setSuccessMessage('');
 
         try {
-            const res = await fetch(`http://localhost:5000/api/dashboard-mgmt/actions/services/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/services/${id}`, {
                 method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(editForm)
@@ -97,6 +97,13 @@ const ServiceDetail = () => {
     const handleCopyKey = () => {
         if (!data) return;
         navigator.clipboard.writeText(data.analytics.apiKey);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleCopyPath = () => {
+        if (!data) return;
+        navigator.clipboard.writeText(data.service.targetUrl + "" + data.service.frontendPath);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -235,6 +242,23 @@ const ServiceDetail = () => {
                                 <code className="text-gray-300 font-mono text-xs break-all bg-[#0B0A0F] px-2.5 py-1 rounded border border-white/5">{data.service.targetUrl}</code>
                             </div>
                         </div>
+
+                        <div className="bg-[#12111A] border border-violet-500/5 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm">
+                            <div className="w-full md:w-auto">
+                                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold block mb-1">Gateway Full Path</span>
+                                <code className="text-violet-400 font-mono font-bold break-all bg-[#0B0A0F] px-2.5 py-1 rounded border border-violet-500/10"> {data.service.targetUrl}{data.service.frontendPath}</code>
+                            </div>
+                            <div className="w-full md:w-auto text-left md:text-right">
+                                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold block mb-1">Target Upstream Loop ({data.service.rateLimit} RPM Max)</span>
+                                <button 
+                                    onClick={handleCopyPath}
+                                    className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-[#12111A] border border-violet-500/10 hover:border-violet-500/30 rounded-lg text-xs text-gray-300 hover:text-white transition-all"
+                                >
+                                    {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                                    <span>{copied ? 'Copied' : 'Copy'}</span>
+                                </button>
+                            </div>
+                        </div>                        
 
                         {/* Gateway Token Credentials Container */}
                         <div className="bg-[#12111A] border border-violet-500/10 rounded-2xl p-6 space-y-4 shadow-xl">

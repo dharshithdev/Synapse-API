@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Verify = () => {
+const AccessDashboard = () => {
     const navigate = useNavigate();
   useEffect(() => {
         const token = localStorage.getItem('synapse_user');
@@ -13,4 +13,4 @@ const Verify = () => {
     }, [navigate]);
 }
 
-export default Verify;
+export default AccessDashboard;

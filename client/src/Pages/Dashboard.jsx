@@ -51,7 +51,7 @@ const Dashboard = () => {
     // Fetch systemic global infrastructure telemetry
     const fetchGlobalMetrics = async () => { 
       try {
-        const response = await axios.get('http://localhost:5000/api/dashboard-mgmt/actions/metrics', {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/dashboard-mgmt/actions/metrics`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

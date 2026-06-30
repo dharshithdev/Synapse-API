@@ -40,7 +40,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/account/profile`, {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/account/profile`, {
                     headers: getAuthHeaders()
                 });
                 const data = await res.json();
@@ -66,7 +66,7 @@ const Profile = () => {
         setSuccess('');
 
         try {
-            const res = await fetch('http://localhost:5000/api/account/profile', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/account/profile`, {
                 method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(infoForm)
@@ -95,7 +95,7 @@ const Profile = () => {
         setSuccess('');
 
         try {
-            const res = await fetch('http://localhost:5000/api/account/profile', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/account/profile`, {
                 method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
@@ -121,7 +121,7 @@ const Profile = () => {
         setError('');
 
         try {
-            const res = await fetch('http://localhost:5000/api/account/profile', {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/account/profile`, {
                 method: 'DELETE',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ verificationString: confirmStringInput })
