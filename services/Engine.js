@@ -11,8 +11,25 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Initialize distributed infrastructure connections
-connectDB();
-connectRedis();
+async function startServer() {
+  try {
+    // 1. Connect to MongoDB
+    await connectDB();
+    
+    // 2. Await the Redis Handshake completely 
+    await connectRedis();
+    
+    // 3. Start listening only after infrastructure is ready
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Synapse Distributed Core Proxy Operational on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("🛑 Server boot crash:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 app.use(cors());
 //app.use(ipFirewall);

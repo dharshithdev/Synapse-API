@@ -7,19 +7,25 @@ const client = createClient({
   url: redisUrl,
   socket: isSecure ? {
     tls: true,
-    rejectUnauthorized: false
-  } : {}
+    rejectUnauthorized: false,
+    keepAlive: 5000 // 💡 Keeps connection alive every 5 seconds
+  } : {
+    keepAlive: 5000
+  }
 });
 
-client.on('error', (err) => console.error('❌ Redis Cache Cluster Node Error:', err));
-client.on('connect', () => console.log('⚡ Redis Client connected successfully!'));
+client.on('error', (err) => {
+  // Suppress repetitive logging during transient connection shifts
+  if (err.message && err.message.includes('Socket closed unexpectedly')) return;
+  console.error('❌ Redis Cache Cluster Node Error:', err);
+});
 
-// 💡 Wrap the connection command inside an explicit async function
+client.on('ready', () => console.log('⚡ Redis Client connected and ready for queries!'));
+
 const connectRedis = async () => {
   if (!client.isOpen) {
     await client.connect();
   }
 };
 
-// Export both the startup function and the client instance for queries
 module.exports = { connectRedis, client };
