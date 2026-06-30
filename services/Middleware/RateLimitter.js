@@ -1,4 +1,4 @@
-const { redisClient, connectRedis } = require('../Config/Redis'); // 💡 Added connectRedis import
+const { client, connectRedis } = require('../Config/Redis'); // 💡 Ensure 'client' matches your export name!
 const Service = require('../Models/Service');
 
 const rateLimiter = async (req, res, next) => {
@@ -6,9 +6,16 @@ const rateLimiter = async (req, res, next) => {
         // 💡 Ensure Redis is completely alive and active before executing commands
         await connectRedis();
 
-        const proxyPath = req.params.proxyPath;
+        // 💡 Parse out the cluster segment from the raw original URL string instead of req.params
+        const originalUrl = req.originalUrl || '';
+        const segments = originalUrl.split('?')[0].split('/').filter(Boolean);
         
-        const pathSegment = Array.isArray(proxyPath) ? proxyPath[0] : (proxyPath || '').split('/').filter(Boolean)[0];
+        // Remove 'api' and 'v1' from the tracking sequence
+        segments.shift(); // Removes 'api'
+        segments.shift(); // Removes 'v1'
+        
+        // The first remaining piece is your cluster name keyword (e.g., 'hercare')
+        const pathSegment = segments[0] || ''; 
         
         if (!pathSegment) {
             return res.status(400).json({ message: 'Bad Request: Target cluster segment missing from path lookup.' });
@@ -37,10 +44,12 @@ const rateLimiter = async (req, res, next) => {
 
         // --- ATOMIC REDIS RATE LIMIT TRANSACTION ---
         const redisKey = `synapse:throttle:${apiKey}`;
-        const currentRequests = await redisClient.incr(redisKey);
+        
+        // ✅ FIXED: Changed from redisClient.incr to client.incr to match your top import!
+        const currentRequests = await client.incr(redisKey);
 
         if (currentRequests === 1) {
-            await redisClient.expire(redisKey, 60);
+            await client.expire(redisKey, 60); // ✅ FIXED: Changed from redisClient to client
         }
 
         if (currentRequests > cluster.rateLimit) {

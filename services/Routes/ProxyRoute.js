@@ -5,15 +5,25 @@ const Analytics = require('../Models/Analytics');
 
 const router = express.Router({ mergeParams: true });
 
-router.all('/', rateLimiter, (req, res, next) => {
-    const proxyPath = req.params.proxyPath;
+// ✅ FIXED: Using .use() catches all nested subpaths without triggering path-to-regexp errors!
+router.use([rateLimiter, (req, res, next) => {
+    const originalUrl = req.originalUrl; 
     const { targetUrl, _id: serviceId } = req.clusterConfig;
     
     const startTime = Date.now(); 
 
-    const segments = Array.isArray(proxyPath) ? [...proxyPath] : (proxyPath || '').split('/').filter(Boolean);
+    // Extract everything after "/api/v1" safely
+    const segments = originalUrl.split('?')[0].split('/').filter(Boolean);
+    
+    // Remove "api" and "v1"
+    segments.shift(); // removes 'api'
+    segments.shift(); // removes 'v1'
+    
+    // Remove the gateway mapping alias keyword (e.g., 'hercare')
     segments.shift(); 
-    const subPath = '/' + segments.join('/');
+    
+    // Reconstruct the real target downstream subpath
+    const subPath = '/' + segments.join('/'); // Yields: '/api/users/login'
 
     return proxy(targetUrl, {
         proxyReqPathResolver: () => {
@@ -23,7 +33,6 @@ router.all('/', rateLimiter, (req, res, next) => {
             headers['x-powered-by'] = 'Synapse Distributed Proxy Engine (Redis Layered)';
             return headers;
         },
-        // Captures telemetry for successful requests passing through the target upstream server
         userResDecorator: async (proxyRes, proxyResData, userReq, userRes) => {
             try {
                 const responseTime = Date.now() - startTime;
@@ -41,6 +50,6 @@ router.all('/', rateLimiter, (req, res, next) => {
             return proxyResData;
         }
     })(req, res, next);
-});
+}]);
 
 module.exports = router;
