@@ -3,25 +3,29 @@ const redis = require('redis');
 let client;
 
 const connectRedis = async () => {
-    // 1. If no client exists, initialize it with a robust retry strategy
     if (!client) {
         client = redis.createClient({
-            url: process.env.REDIS_URL, // e.g., rediss://default:... from Upstash
+            url: process.env.REDIS_URL, 
             socket: {
+                // ✅ CRITICAL CLOUD FIX: Enforce TLS configuration for Upstash
+                tls: {}, 
                 reconnectStrategy: (retries) => {
+                    // Cap retries so it doesn't spin infinitely out of control
+                    if (retries > 10) {
+                        console.error('❌ Redis Reconnection limit breached. Halting retry logic.');
+                        return false; 
+                    }
                     console.log(`🔄 Redis reconnecting... attempt #${retries}`);
-                    // Exponential backoff or max out at 3 seconds
-                    return Math.min(retries * 100, 3000); 
+                    return Math.min(retries * 200, 3000); 
                 },
                 connectTimeout: 10000
             }
         });
 
-        client.on('error', (err) => console.error('❌ Redis Client Error:', err));
+        client.on('error', (err) => console.error('❌ Redis Client Error:', err.message));
         client.on('connect', () => console.log('⚡ Connected to Upstash Redis Node'));
     }
 
-    // 2. ✅ CRITICAL FIX: If the socket unexpectedly closed, explicitly reopen it
     if (!client.isOpen) {
         try {
             await client.connect();
@@ -33,5 +37,4 @@ const connectRedis = async () => {
     return client;
 };
 
-// Make sure you export BOTH the wrapper and the instance cleanly
 module.exports = { client, connectRedis };
