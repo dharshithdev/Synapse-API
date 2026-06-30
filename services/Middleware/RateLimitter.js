@@ -1,24 +1,21 @@
-const { client, connectRedis } = require('../Config/Redis'); // 💡 Ensure 'client' matches your export name!
+// 1. Keep your import from your Config file
+const { connectRedis } = require('../Config/Redis'); 
 const Service = require('../Models/Service');
 
 const rateLimiter = async (req, res, next) => {
     try {
-        // 💡 Ensure Redis is completely alive and active before executing commands
-        await connectRedis();
+        // 2. ✅ FIX: Capture the live, initialized client returned by the function!
+        const redisClient = await connectRedis();
 
-        // 💡 Parse out the cluster segment from the raw original URL string instead of req.params
         const originalUrl = req.originalUrl || '';
         const segments = originalUrl.split('?')[0].split('/').filter(Boolean);
         
-        // Remove 'api' and 'v1' from the tracking sequence
         segments.shift(); // Removes 'api'
         segments.shift(); // Removes 'v1'
-        
-        // The first remaining piece is your cluster name keyword (e.g., 'hercare')
         const pathSegment = segments[0] || ''; 
         
         if (!pathSegment) {
-            return res.status(400).json({ message: 'Bad Request: Target cluster segment missing from path lookup.' });
+            return res.status(400).json({ message: 'Bad Request: Target cluster segment missing.' });
         }
 
         const frontendLookupPath = `/api/${pathSegment}`;
@@ -42,14 +39,13 @@ const rateLimiter = async (req, res, next) => {
             return res.status(403).json({ message: 'Security Violation: Invalid credential signature verified.' });
         }
 
-        // --- ATOMIC REDIS RATE LIMIT TRANSACTION ---
         const redisKey = `synapse:throttle:${apiKey}`;
         
-        // ✅ FIXED: Changed from redisClient.incr to client.incr to match your top import!
-        const currentRequests = await client.incr(redisKey);
+        // 3. ✅ FIX: Use the 'redisClient' reference variable we just captured above
+        const currentRequests = await redisClient.incr(redisKey);
 
         if (currentRequests === 1) {
-            await client.expire(redisKey, 60); // ✅ FIXED: Changed from redisClient to client
+            await redisClient.expire(redisKey, 60); 
         }
 
         if (currentRequests > cluster.rateLimit) {
