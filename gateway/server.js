@@ -20,6 +20,9 @@ app.use('/api/dashboard-mgmt/actions', actionRoute);
 const accountRoute = require('./Routes/AccountRoute');
 app.use('/api/account', accountRoute);
 
+const ipRoute = require('./Routes/IPRoute');
+app.use('/api/dashboard-mgmt/ip', ipRoute);
+
 app.use((err, req, res, next) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(statusCode).json({

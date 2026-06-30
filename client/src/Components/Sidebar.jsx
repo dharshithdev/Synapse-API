@@ -6,6 +6,7 @@ const Sidebar = ({ isOpen, toggleSidebar, activePage, setActivePage }) => {
   const menuItems = [
     { id: 'analyze', name: 'Analyze', icon: LayoutDashboard, path: '/' },
     { id: 'services', name: 'Services', icon: Server, path: '/services' },
+    { id: 'manage', name: 'IP Manage', icon: Server, path: '/ipmanage' },
     { id: 'profile', name: 'Profile', icon: User, path: '/profile' },
   ];
 

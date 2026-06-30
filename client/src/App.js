@@ -10,6 +10,7 @@ import Privacy from './Pages/Privacy';
 import Terms from './Pages/Terms';
 import NotFound from './Pages/404';
 import Docs from './Pages/Docs';
+import IpManager from './Pages/IPManager';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/ipmanage" element={<IpManager />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/docs" element={<Docs />} />
