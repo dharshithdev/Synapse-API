@@ -34,6 +34,11 @@ startServer();
 app.use(cors());
 //app.use(ipFirewall);
 
+app.use((req, res, next) => {
+    console.log(`Incoming request caught: ${req.method} ${req.url} | Original: ${req.originalUrl}`);
+    next();
+});
+
 // Mount the clean, isolated proxy router module onto the base endpoint structure
 app.use('/api/v1', proxyRouter);
 
