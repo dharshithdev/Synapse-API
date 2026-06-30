@@ -9,8 +9,8 @@ const PORT = process.env.PORT;
 
 const allowedOrigins = [
   'http://localhost:3000',    
-  'https://marvelsato.com',           // New custom domain
-  'https://www.marvelsato.com',       // Include www
+  'https://synapse-api-way.vercel.app',           // New custom domain
+  'https://www.synapse-api-way.vercel.app',       // Include www
   process.env.FRONTEND_URL               
 ];
 
