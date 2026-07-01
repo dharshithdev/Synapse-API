@@ -36,10 +36,6 @@ const Home = () => {
 
       {/* --- HERO LAYER SECTION --- */}
       <section className="relative z-10 pt-44 pb-20 md:pt-56 md:pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center">
-        
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-violet-500/10 border border-violet-500/20 rounded-full text-xs font-semibold text-violet-400 mb-6 backdrop-blur-md">
-          <Cpu size={12} className="animate-spin [animation-duration:6s]" /> Core v2.0 proxy clusters fully operational
-        </div>
 
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight max-w-4xl leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-500">
           Orchestrate API Clusters <br />
